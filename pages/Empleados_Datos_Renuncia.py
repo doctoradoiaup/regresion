@@ -16,7 +16,6 @@ from sklearn.metrics import confusion_matrix, accuracy_score, roc_curve, classif
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 # Estilo de fondo
 page_bg_img = """
 <style>
@@ -197,3 +196,20 @@ if df is not None:
 
     # Mostrar resúmenes de los modelos
     display_model_summary(results, X)
+
+# Configurar la barra lateral
+st.sidebar.header("Ayuda")
+st.sidebar.write("""
+Esta aplicación permite realizar un análisis de renuncia de empleados utilizando diferentes modelos de clasificación. 
+Los usuarios pueden cargar un archivo Excel con datos sobre empleados, y la aplicación:
+- Carga y muestra los datos en un formato visual.
+- Convierte las columnas categóricas a variables dummy para facilitar el análisis.
+- Entrena y evalúa varios modelos de clasificación, incluyendo:
+  - Regresión Logística
+  - Árbol de Decisión
+  - Bosque Aleatorio
+- Muestra la precisión de cada modelo, así como matrices de confusión y reportes de clasificación.
+- Ofrece visualizaciones como curvas ROC e importancias de características.
+
+Desarrollado por: **Javier Horacio Pérez Ricárdez**
+""")
