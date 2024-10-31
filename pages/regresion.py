@@ -23,11 +23,22 @@ def preprocess_data(data):
     st.write("Datos faltantes por columna:")
     st.write(data.isnull().sum())
     
-    # Eliminar filas con datos faltantes (o puedes elegir otra estrategia)
-    data = data.dropna()
+    # Verificar si hay datos faltantes en la columna 'Renuncia'
+    if data["Renuncia"].isnull().sum() > 0:
+        st.warning("Hay datos faltantes en la columna 'Renuncia'. Se eliminarán las filas con valores faltantes.")
+    
+    # Eliminar filas con datos faltantes en 'Renuncia'
+    data = data.dropna(subset=["Renuncia"])
     
     # Codificar variable objetivo
     y = data["Renuncia"].map({"Sí": 1, "No": 0})
+    
+    # Verificar si hay valores no finitos en y
+    if np.any(np.isinf(y)) or np.any(np.isnan(y)):
+        st.error("La variable de salida 'y' contiene valores no finitos. Por favor, verifica tus datos.")
+        return None, None  # Salir si hay un problema
+    
+    # Dropping the 'Renuncia' column from X
     X = data.drop(columns=["Renuncia"])
     
     # Convertir variables categóricas en variables dummy
@@ -111,15 +122,16 @@ def main():
 
         # Preprocesar datos
         X, y = preprocess_data(data)
+        
+        if X is not None and y is not None:
+            # Dividir datos
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Dividir datos
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            # Entrenar y evaluar modelos
+            results = train_and_evaluate(X_train, X_test, y_train, y_test)
 
-        # Entrenar y evaluar modelos
-        results = train_and_evaluate(X_train, X_test, y_train, y_test)
-
-        # Mostrar resumen del modelo
-        display_model_summary(results)
+            # Mostrar resumen del modelo
+            display_model_summary(results)
 
 if __name__ == "__main__":
     main()
